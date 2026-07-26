@@ -1,9 +1,12 @@
 # Bot Lab 01 — Cómo probar (QA) un agente conversacional
 
-Laboratorio didáctico: un **chatbot determinista** que responde preguntas sobre
+Laboratorio didáctico: un **chatbot** (determinista por defecto, con opción de usar
+un **LLM real**) que responde preguntas sobre
 **productos financieros**, construido con **LangGraph** (lógica del agente) y
-**Django** (frontend del chat). El objetivo NO es el chatbot en sí, sino
-**enseñar a un QA cómo se prueba un agente como este**.
+**Django** (backend: API HTTP y servido de la página). La interfaz de chat es
+**HTML + JavaScript** (vanilla) que corre en el navegador y consume la API. El
+objetivo NO es el chatbot en sí, sino **enseñar a un QA cómo se prueba un agente
+como este**.
 
 ---
 
@@ -12,9 +15,19 @@ Laboratorio didáctico: un **chatbot determinista** que responde preguntas sobre
 Un LLM es **no determinista**: la misma pregunta puede dar respuestas distintas.
 Eso hace casi imposible escribir aserciones exactas (`assertEqual`).
 
-Este agente es **100% determinista y sin LLM**: su "razonamiento" es un pipeline
-de reglas puras. **Misma entrada ⇒ misma salida, siempre.** Gracias a eso podemos
-enseñar QA con aserciones reproducibles.
+El agente **puede funcionar en dos modos**, elegidos con un feature flag (ver §4):
+
+- **Modo determinista (por defecto):** su "razonamiento" es un pipeline de reglas
+  puras, **sin LLM**. **Misma entrada ⇒ misma salida, siempre.** Es el modo pensado
+  para enseñar QA con aserciones exactas y reproducibles.
+- **Modo LLM (`claude` / `openai` / `google` / `minimax`):** un **LLM real** redacta
+  la respuesta final. La **clasificación de intención y la recuperación de datos
+  siguen siendo deterministas**, pero **la redacción la genera el LLM**, anclada al
+  dataset (RAG). La salida ya no está garantizada como reproducible byte a byte, así
+  que el enfoque de QA cambia (aserciones semánticas, propiedades, anti-alucinación).
+
+Tener ambos modos en el mismo repo es justo el punto del lab: **comparar cómo cambia
+la estrategia de pruebas** entre un agente determinista y uno con LLM real.
 
 > Regla de oro del lab: si no puedes reproducir la salida, no puedes testearla.
 > El primer trabajo del QA de agentes es **controlar las fuentes de aleatoriedad**
@@ -28,12 +41,17 @@ El **dataset** también es determinista: se genera con una **semilla fija**
 ## 2. Arquitectura
 
 ```
-Usuario ─► Django (chat/) ─► Agente LangGraph (agent/) ─► Dataset JSON
-             views.py            graph.py                    dataset.py
+Navegador (HTML + JS)  ─►  Django BACKEND (chat/)  ─►  Agente LangGraph (agent/)  ─►  Dataset JSON
+  index.html (UI)   fetch    views.py (API + página)      graph.py                       dataset.py
 
 Grafo LangGraph (StateGraph):
    normalizar ─► clasificar ─► responder ─► END
 ```
+
+Django es **puro backend**: expone la API HTTP (`/api/chat/`, `/api/cerrar/`) y
+sirve la plantilla `index.html`. Toda la **interfaz** (renderizado Markdown,
+comandos, estado del hilo) es **JavaScript en el navegador**; el servidor no
+renderiza mensajes de chat.
 
 | Archivo | Rol |
 |---|---|
@@ -41,8 +59,9 @@ Grafo LangGraph (StateGraph):
 | `agent/graph.py` | Grafo LangGraph: normaliza texto, clasifica intención, recupera y responde. |
 | `agent/threads.py` | Gestor de hilos de sesión (`thread_id`, sin memoria) para `/cerrar`. |
 | `agent/tests.py` | **Tests del agente** (la parte importante del lab). |
-| `chat/views.py` | Endpoints `POST /api/chat/` y `POST /api/cerrar/` + página del chat. |
-| `chat/tests.py` | Tests de la API/frontend (contrato HTTP, extremo a extremo). |
+| `chat/views.py` | **Backend**: endpoints `POST /api/chat/` y `POST /api/cerrar/` + servido de la página. |
+| `chat/templates/chat/index.html` | **Interfaz**: HTML + JS (UI, renderizado Markdown, comandos) que corre en el navegador. |
+| `chat/tests.py` | Tests de la capa web/API (contrato HTTP, extremo a extremo). |
 | `agent/llm_config.py` | **Feature flag** de proveedor (`get_provider()` según env). |
 | `agent/providers/` | Adaptadores de LLM: `claude`, `openai`, `google`, `minimax`. |
 
@@ -100,8 +119,8 @@ cp .env.example .env
 | `/cerrar` | `/close` | Cierra el hilo a nivel del agente (`POST /api/cerrar/`) y el **siguiente mensaje abre un hilo nuevo**. |
 
 El **hilo** es solo un identificador de sesión (`thread_id`): el agente sigue
-siendo single-turn y determinista (no hay memoria entre mensajes). El frontend
-genera un `thread_id`, lo envía en cada `POST /api/chat/`, y al usar `/cerrar` lo
+siendo single-turn y determinista (no hay memoria entre mensajes). El cliente
+(JS del navegador) genera un `thread_id`, lo envía en cada `POST /api/chat/`, y al usar `/cerrar` lo
 invalida en el backend y crea otro. Con el "Modo QA" activo, la línea de metadatos
 muestra el `thread_id` y el número de `turnos`.
 
@@ -165,7 +184,7 @@ Ejecutar toda la batería:
 
 ```bash
 .venv/bin/python -m unittest agent.tests -v   # lógica del agente
-.venv/bin/python manage.py test chat -v 2     # API / frontend
+.venv/bin/python manage.py test chat -v 2     # capa web / API
 ```
 
 Las pruebas están organizadas por **categoría de QA de agentes**:
