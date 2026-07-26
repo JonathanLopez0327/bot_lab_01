@@ -1,0 +1,9 @@
+# Dependencias OPCIONALES: solo si usas un proveedor LLM real
+# (LLM_PROVIDER = claude | openai | google).
+# El modo por defecto (deterministic) NO necesita nada de esto.
+#
+#   pip install -r requirements-llm.txt
+
+anthropic>=0.40      # LLM_PROVIDER=claude
+openai>=1.40         # LLM_PROVIDER=openai  y  LLM_PROVIDER=minimax (API compatible)
+google-genai>=0.3    # LLM_PROVIDER=google

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bot Lab 01 · Asistente de productos financieros</title>
+  <style>
+    /* ============================================================
+       Tema retro (Windows 95/98) — a juego con "El Rincón del Teórico".
+       Biseles 3D hechos a mano: raised (botón/ventana) y sunken (campos).
+       ============================================================ */
+    :root{
+      --silver:#c0c0c0; --gray:#808080; --dark:#000; --light:#dfdfdf; --white:#fff;
+      --navy:#000080; --navy2:#1084d0; --teal:#008080;
+      --field:#fff; --ink:#000; --green:#008000;
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0; background:var(--teal);
+      font-family:"MS Sans Serif","Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+      font-size:13px; color:var(--ink);
+      display:flex; align-items:center; justify-content:center;
+      padding:18px;
+      /* leve textura de escritorio */
+      background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size:4px 4px;
+    }
+
+    /* --- Biseles 3D reutilizables --- */
+    .raised{ background:var(--silver);
+      border:2px solid; border-color:var(--light) var(--dark) var(--dark) var(--light);
+      box-shadow:inset 1px 1px 0 var(--white), inset -1px -1px 0 var(--gray); }
+    .sunken{ background:var(--field);
+      border:2px solid; border-color:var(--gray) var(--white) var(--white) var(--gray);
+      box-shadow:inset 1px 1px 0 var(--dark), inset -1px -1px 0 var(--light); }
+
+    /* --- Ventana --- */
+    .window{ width:min(760px,100%); height:min(88vh,760px);
+      display:flex; flex-direction:column;
+      background:var(--silver);
+      border:2px solid; border-color:var(--light) var(--dark) var(--dark) var(--light);
+      box-shadow:inset 1px 1px 0 var(--white), inset -1px -1px 0 var(--gray), 3px 3px 0 rgba(0,0,0,.35);
+      padding:3px; }
+
+    /* --- Barra de título --- */
+    .titlebar{ display:flex; align-items:center; gap:6px;
+      background:linear-gradient(90deg,var(--navy),var(--navy2));
+      color:#fff; padding:3px 4px; }
+    .titlebar .t-ico{ font-size:14px; line-height:1; }
+    .titlebar .t-txt{ font-weight:bold; font-size:13px; flex:1;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .t-btns{ display:flex; gap:2px; }
+    .t-btn{ width:18px; height:16px; display:flex; align-items:center; justify-content:center;
+      font-size:11px; font-weight:bold; line-height:1; color:#000; cursor:default;
+      background:var(--silver);
+      border:2px solid; border-color:var(--light) var(--dark) var(--dark) var(--light);
+      box-shadow:inset 1px 1px 0 var(--white), inset -1px -1px 0 var(--gray); }
+
+    /* --- Barra de menú --- */
+    .menubar{ display:flex; gap:2px; padding:2px 1px; font-size:13px; }
+    .menubar span{ padding:1px 7px; cursor:default; }
+    .menubar span u{ text-decoration:underline; }
+    .menubar span:hover{ background:var(--navy); color:#fff; }
+
+    /* --- Barra de dirección --- */
+    .addrbar{ display:flex; align-items:center; gap:6px; padding:3px 4px 5px; }
+    .addrbar label{ color:#000; }
+    .addr{ flex:1; padding:2px 6px; font-size:12px; color:#000;
+      display:flex; align-items:center; gap:6px; overflow:hidden; white-space:nowrap; }
+    .addr .fav{ font-size:12px; }
+
+    /* --- Área de chat (campo hundido, blanco) --- */
+    #chat{ flex:1; margin:2px 4px; padding:10px; overflow-y:auto;
+      display:flex; flex-direction:column; gap:9px; }
+    .row{ display:flex; flex-direction:column; max-width:82%; }
+    .row.user{ align-self:flex-end; align-items:flex-end; }
+    .row.bot { align-self:flex-start; align-items:flex-start; }
+    .who{ font-size:11px; color:var(--gray); margin:0 3px 2px; font-weight:bold; }
+    .msg{ padding:7px 10px; line-height:1.45; white-space:pre-wrap; font-size:13px; }
+    .msg.bot{ background:var(--silver); color:#000;
+      border:2px solid; border-color:var(--light) var(--gray) var(--gray) var(--light);
+      box-shadow:inset 1px 1px 0 var(--white); }
+    .msg.user{ background:var(--navy); color:#fff;
+      border:2px solid; border-color:#3a6ea5 #00003a #00003a #3a6ea5; }
+    .msg{ white-space:normal; }               /* el Markdown ya gestiona los saltos */
+    .msg :is(strong,b){ font-weight:bold; }
+    .msg em{ font-style:italic; }
+    .msg code{ font-family:"Courier New",monospace; font-size:12px;
+      background:rgba(0,0,0,.08); padding:0 3px; }
+    .msg.user code{ background:rgba(255,255,255,.18); }
+    .msg ul,.msg ol{ margin:4px 0; padding-left:22px; }
+    .msg li{ margin:2px 0; }
+    .msg > div{ margin:1px 0; }
+    .msg > br + br{ display:none; }           /* colapsa líneas en blanco repetidas */
+    /* Tablas GFM con aspecto de rejilla retro */
+    .msg table{ border-collapse:collapse; margin:6px 0; font-size:12px;
+      background:var(--white); color:#000;
+      border:2px solid; border-color:var(--gray) var(--white) var(--white) var(--gray); }
+    .msg th,.msg td{ border:1px solid var(--gray); padding:3px 8px; text-align:left; }
+    .msg thead th{ background:var(--silver); font-weight:bold; }
+    .msg tbody tr:nth-child(even){ background:#eee; }
+    .msg.user table{ color:#000; }            /* legibilidad si la tabla cae en burbuja navy */
+    .meta{ align-self:flex-start; max-width:100%; margin-top:1px;
+      font-family:"Courier New",monospace; font-size:11px; color:var(--green);
+      background:#000; padding:5px 8px; word-break:break-word;
+      border:2px solid; border-color:var(--gray) var(--white) var(--white) var(--gray); }
+
+    /* --- Zona QA (checkbox) --- */
+    .qa{ display:flex; align-items:center; gap:6px; padding:4px 8px; margin:0 4px;
+      font-size:12px; color:#000; }
+    .qa input{ width:13px; height:13px; }
+
+    /* --- Formulario --- */
+    form{ display:flex; gap:6px; padding:6px; margin:2px 2px 0; }
+    #input{ flex:1; padding:5px 8px; font-size:13px; color:#000;
+      font-family:inherit; outline:none; }
+    #input::placeholder{ color:#707070; }
+    button#send{ padding:4px 16px; font-size:13px; font-weight:bold; color:#000;
+      font-family:inherit; cursor:pointer; }
+    button#send:active{ border-color:var(--dark) var(--light) var(--light) var(--dark);
+      box-shadow:inset 1px 1px 0 var(--gray); }
+    button#send:disabled{ color:var(--gray); text-shadow:1px 1px 0 var(--white); cursor:default; }
+
+    /* --- Barra de estado --- */
+    .statusbar{ display:flex; gap:3px; padding:3px; margin-top:2px; }
+    .cell{ padding:2px 7px; font-size:12px; color:#000; }
+    .cell.grow{ flex:1; }
+    .cell.grow #status{ color:#000; }
+
+    /* Scrollbar retro-ish */
+    #chat::-webkit-scrollbar{ width:16px; }
+    #chat::-webkit-scrollbar-track{ background:#dfdfdf;
+      box-shadow:inset 1px 1px 0 var(--gray); }
+    #chat::-webkit-scrollbar-thumb{ background:var(--silver);
+      border:2px solid; border-color:var(--light) var(--dark) var(--dark) var(--light); }
+  </style>
+</head>
+<body>
+  <div class="window">
+
+    <!-- Barra de título -->
+    <div class="titlebar">
+      <span class="t-ico">🤖</span>
+      <span class="t-txt">Asistente de productos financieros — QA hands-on</span>
+      <span class="t-btns">
+        <span class="t-btn" title="Minimizar">_</span>
+        <span class="t-btn" title="Maximizar">□</span>
+        <span class="t-btn" title="Cerrar">✕</span>
+      </span>
+    </div>
+
+    <!-- Menú -->
+    <div class="menubar">
+      <span><u>A</u>rchivo</span>
+      <span><u>E</u>dición</span>
+      <span><u>V</u>er</span>
+      <span><u>Q</u>A</span>
+      <span>A<u>y</u>uda</span>
+    </div>
+
+    <!-- Dirección -->
+    <div class="addrbar">
+      <label>Dirección:</label>
+      <div class="addr sunken"><span class="fav">🤖</span> C:\QA\bot-lab-01\chat.htm</div>
+    </div>
+
+    <!-- Chat -->
+    <div id="chat" class="sunken"></div>
+
+    <!-- Zona QA -->
+    <label class="qa"><input type="checkbox" id="debug"> Modo QA: mostrar intención y trace del agente</label>
+
+    <!-- Formulario -->
+    <form id="form">
+      <input id="input" class="sunken" placeholder="Ej: ¿qué tarjetas de crédito hay?" autocomplete="off" autofocus>
+      <button type="submit" id="send" class="raised">Enviar</button>
+    </form>
+
+    <!-- Barra de estado -->
+    <div class="statusbar">
+      <div class="cell sunken">Listo</div>
+      <div class="cell sunken grow"><span id="status">proveedor=… · esperando</span></div>
+      <div class="cell sunken">Zona: práctica real</div>
+    </div>
+
+  </div>
+
+  <script>
+    const chat  = document.getElementById('chat');
+    const form  = document.getElementById('form');
+    const input = document.getElementById('input');
+    const send  = document.getElementById('send');
+    const debug = document.getElementById('debug');
+    const status = document.getElementById('status');
+
+    // Identificador del hilo de sesión (sin memoria en el agente): agrupa los
+    // turnos de esta conversación y permite cerrarla con /cerrar. Al cerrar se
+    // genera uno nuevo, de modo que el siguiente mensaje abre un hilo distinto.
+    let threadId = crypto.randomUUID();
+
+    const SALUDO = '¡Hola! Pregúntame por tasas, requisitos, costos o el catálogo de productos financieros.';
+
+    // --- Mini-renderizador Markdown (seguro por construcción) ----------- //
+    // No usamos innerHTML: TODO el contenido del usuario/modelo entra como
+    // createTextNode, así que es imposible inyectar HTML (anti-XSS, importante
+    // para las entradas adversariales del lab). Solo creamos nosotros las
+    // etiquetas de formato (<strong>, <em>, <code>, <ul>/<ol>/<li>).
+    function appendInline(parent, s){
+      const re = /\*\*([^*]+)\*\*|\*([^*\n]+)\*|`([^`]+)`/g;  // **negrita** *cursiva* `código`
+      let last = 0;
+      for(const m of s.matchAll(re)){
+        if(m.index > last) parent.appendChild(document.createTextNode(s.slice(last, m.index)));
+        let el;
+        if(m[1] != null){ el = document.createElement('strong'); el.textContent = m[1]; }
+        else if(m[2] != null){ el = document.createElement('em'); el.textContent = m[2]; }
+        else { el = document.createElement('code'); el.textContent = m[3]; }
+        parent.appendChild(el);
+        last = m.index + m[0].length;
+      }
+      if(last < s.length) parent.appendChild(document.createTextNode(s.slice(last)));
+    }
+    // Tabla GFM: fila separadora tipo |---|:--:|---|
+    function esSeparadorTabla(line){
+      return /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?\s*$/.test(line);
+    }
+    function celdas(line){
+      let s = line.trim();
+      if(s.startsWith('|')) s = s.slice(1);
+      if(s.endsWith('|'))   s = s.slice(0, -1);
+      return s.split('|').map(c => c.trim());
+    }
+    function renderMarkdownInto(container, text){
+      const lines = String(text).split('\n');
+      let list = null;   // <ul>/<ol> abierta, o null
+      for(let i = 0; i < lines.length; i++){
+        const line = lines[i].trimEnd();
+
+        // Tabla: cabecera con «|» seguida de una fila separadora.
+        if(line.includes('|') && i + 1 < lines.length && esSeparadorTabla(lines[i + 1])){
+          list = null;
+          const table = document.createElement('table');
+          const thead = document.createElement('thead'), htr = document.createElement('tr');
+          for(const c of celdas(line)){ const th = document.createElement('th'); appendInline(th, c); htr.appendChild(th); }
+          thead.appendChild(htr); table.appendChild(thead);
+          const tbody = document.createElement('tbody');
+          i += 2;
+          while(i < lines.length && lines[i].includes('|')){
+            const tr = document.createElement('tr');
+            for(const c of celdas(lines[i])){ const td = document.createElement('td'); appendInline(td, c); tr.appendChild(td); }
+            tbody.appendChild(tr); i++;
+          }
+          i--;   // compensa el i++ del for
+          table.appendChild(tbody); container.appendChild(table);
+          continue;
+        }
+
+        let m;
+        if((m = line.match(/^\s*[-*•]\s+(.*)$/))){
+          if(!list || list.tagName !== 'UL'){ list = document.createElement('ul'); container.appendChild(list); }
+          const li = document.createElement('li'); appendInline(li, m[1]); list.appendChild(li);
+        } else if((m = line.match(/^\s*\d+[.)]\s+(.*)$/))){
+          if(!list || list.tagName !== 'OL'){ list = document.createElement('ol'); container.appendChild(list); }
+          const li = document.createElement('li'); appendInline(li, m[1]); list.appendChild(li);
+        } else if(line.trim() === ''){
+          list = null; container.appendChild(document.createElement('br'));
+        } else {
+          list = null; const d = document.createElement('div'); appendInline(d, line); container.appendChild(d);
+        }
+      }
+    }
+
+    function add(text, cls){
+      const row = document.createElement('div');
+      row.className = 'row ' + cls;
+      const who = document.createElement('div');
+      who.className = 'who';
+      who.textContent = cls === 'user' ? 'Tú' : '🤖 Asistente';
+      const msg = document.createElement('div');
+      msg.className = 'msg ' + cls;
+      // El usuario se muestra como texto plano; el bot se renderiza como Markdown.
+      if(cls === 'bot'){ renderMarkdownInto(msg, text); }
+      else { msg.textContent = text; }
+      row.appendChild(who);
+      row.appendChild(msg);
+      chat.appendChild(row);
+      chat.scrollTop = chat.scrollHeight;
+      return msg;
+    }
+    function addMeta(data){
+      const div = document.createElement('div');
+      div.className = 'meta';
+      const det = data.determinista ? 'sí' : 'NO';
+      div.textContent =
+        `proveedor=${data.proveedor} · determinista=${det} · intencion=${data.intencion} · ` +
+        `tipo=${data.tipo_detectado} · producto=${data.producto} · trace=[${data.trace.join(' → ')}] · ` +
+        `thread_id=${data.thread_id} · turnos=${data.turnos}`;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+    function setStatus(data){
+      if(!data || !data.proveedor){ return; }
+      const det = data.determinista ? 'determinista' : 'NO determinista';
+      status.textContent = `proveedor=${data.proveedor} · ${det}`;
+    }
+
+    add(SALUDO, 'bot');
+
+    // --- Comandos del chat (se procesan en el cliente) ------------------- //
+    // Estructura de respuesta fija (determinista): solo cambia lo mínimo.
+    async function manejarComando(mensaje){
+      const cmd = mensaje.slice(1).trim().split(/\s+/)[0].toLowerCase();
+      switch(cmd){
+        case 'limpiar': case 'clear':
+          chat.replaceChildren();       // vacía la conversación visible
+          add(SALUDO, 'bot');           // vuelve al saludo inicial
+          return;
+        case 'qa': case 'debug':
+          debug.checked = !debug.checked;
+          add('Modo QA ' + (debug.checked ? 'activado' : 'desactivado') + '.', 'bot');
+          return;
+        case 'cerrar': case 'close':
+          try{
+            await fetch('/api/cerrar/', {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({thread_id: threadId})
+            });
+          }catch(err){ /* aunque falle la red, cerramos el hilo en el cliente */ }
+          threadId = crypto.randomUUID();   // el próximo mensaje abre un hilo nuevo
+          add('Hilo cerrado. El próximo mensaje iniciará un hilo nuevo.', 'bot');
+          return;
+        default:
+          add('Comando no reconocido. Disponibles: /limpiar, /qa, /cerrar.', 'bot');
+          return;
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const mensaje = input.value.trim();
+      if(!mensaje) return;
+      add(mensaje, 'user');
+      input.value = '';
+      // Los comandos empiezan por «/» y se manejan en el cliente (no llaman al agente).
+      if(mensaje.startsWith('/')){ await manejarComando(mensaje); input.focus(); return; }
+      send.disabled = true;
+      status.textContent = 'Procesando…';
+      try{
+        const res = await fetch('/api/chat/', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({mensaje, thread_id: threadId})
+        });
+        const data = await res.json();
+        add(data.respuesta || data.error || '(sin respuesta)', 'bot');
+        setStatus(data);
+        if(debug.checked && data.trace) addMeta(data);
+      }catch(err){
+        add('Error de red: ' + err, 'bot');
+        status.textContent = 'Error de red';
+      }finally{
+        send.disabled = false;
+        input.focus();
+      }
+    });
+  </script>
+</body>
+</html>

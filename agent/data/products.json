@@ -1,0 +1,383 @@
+[
+  {
+    "id": "P001",
+    "nombre": "Solaris Classic",
+    "tipo": "tarjeta_credito",
+    "tipo_label": "Tarjeta de crédito",
+    "tasa_interes_anual": 18.6,
+    "plazo_meses": 0,
+    "monto_minimo": 2000,
+    "cuota_anual": 30,
+    "moneda": "USD",
+    "requisitos": [
+      "Cuenta bancaria activa",
+      "Documento de identidad vigente"
+    ]
+  },
+  {
+    "id": "P002",
+    "nombre": "Ática Ágil",
+    "tipo": "prestamo_personal",
+    "tipo_label": "Préstamo personal",
+    "tasa_interes_anual": 13.39,
+    "plazo_meses": 48,
+    "monto_minimo": 1400,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Documento de identidad vigente",
+      "Ingreso mínimo mensual demostrable"
+    ]
+  },
+  {
+    "id": "P003",
+    "nombre": "Prisma Casa",
+    "tipo": "hipoteca",
+    "tipo_label": "Crédito hipotecario",
+    "tasa_interes_anual": 10.91,
+    "plazo_meses": 360,
+    "monto_minimo": 50300,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "Comprobante de domicilio",
+      "Documento de identidad vigente",
+      "No estar reportado en centrales de riesgo"
+    ]
+  },
+  {
+    "id": "P004",
+    "nombre": "Cumbre Ahorro",
+    "tipo": "cuenta_ahorro",
+    "tipo_label": "Cuenta de ahorro",
+    "tasa_interes_anual": 3.54,
+    "plazo_meses": 0,
+    "monto_minimo": 0,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Comprobante de domicilio",
+      "Comprobante de ingresos de los últimos 3 meses",
+      "Documento de identidad vigente",
+      "Ingreso mínimo mensual demostrable"
+    ]
+  },
+  {
+    "id": "P005",
+    "nombre": "Prisma Renta",
+    "tipo": "plazo_fijo",
+    "tipo_label": "Depósito a plazo fijo",
+    "tasa_interes_anual": 4.56,
+    "plazo_meses": 18,
+    "monto_minimo": 2900,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Comprobante de ingresos de los últimos 3 meses",
+      "Cuenta bancaria activa",
+      "No estar reportado en centrales de riesgo"
+    ]
+  },
+  {
+    "id": "P006",
+    "nombre": "Nova Global",
+    "tipo": "fondo_inversion",
+    "tipo_label": "Fondo de inversión",
+    "tasa_interes_anual": 9.43,
+    "plazo_meses": 0,
+    "monto_minimo": 2100,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Comprobante de domicilio",
+      "Cuenta bancaria activa",
+      "Ingreso mínimo mensual demostrable",
+      "No estar reportado en centrales de riesgo"
+    ]
+  },
+  {
+    "id": "P007",
+    "nombre": "Vértice Rewards",
+    "tipo": "tarjeta_credito",
+    "tipo_label": "Tarjeta de crédito",
+    "tasa_interes_anual": 22.61,
+    "plazo_meses": 0,
+    "monto_minimo": 700,
+    "cuota_anual": 30,
+    "moneda": "USD",
+    "requisitos": [
+      "Comprobante de domicilio",
+      "Documento de identidad vigente",
+      "Ingreso mínimo mensual demostrable"
+    ]
+  },
+  {
+    "id": "P008",
+    "nombre": "Andes Plus",
+    "tipo": "prestamo_personal",
+    "tipo_label": "Préstamo personal",
+    "tasa_interes_anual": 16.45,
+    "plazo_meses": 36,
+    "monto_minimo": 3000,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Cuenta bancaria activa",
+      "Documento de identidad vigente",
+      "Ingreso mínimo mensual demostrable"
+    ]
+  },
+  {
+    "id": "P009",
+    "nombre": "Cumbre Hogar",
+    "tipo": "hipoteca",
+    "tipo_label": "Crédito hipotecario",
+    "tasa_interes_anual": 10.96,
+    "plazo_meses": 180,
+    "monto_minimo": 84600,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "Cuenta bancaria activa",
+      "Documento de identidad vigente",
+      "Ingreso mínimo mensual demostrable"
+    ]
+  },
+  {
+    "id": "P010",
+    "nombre": "Cumbre Alcancía",
+    "tipo": "cuenta_ahorro",
+    "tipo_label": "Cuenta de ahorro",
+    "tasa_interes_anual": 1.38,
+    "plazo_meses": 0,
+    "monto_minimo": 0,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "Comprobante de domicilio"
+    ]
+  },
+  {
+    "id": "P011",
+    "nombre": "Nova Renta",
+    "tipo": "plazo_fijo",
+    "tipo_label": "Depósito a plazo fijo",
+    "tasa_interes_anual": 6.21,
+    "plazo_meses": 3,
+    "monto_minimo": 5900,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "Cuenta bancaria activa",
+      "Documento de identidad vigente",
+      "Ingreso mínimo mensual demostrable"
+    ]
+  },
+  {
+    "id": "P012",
+    "nombre": "Delta Global",
+    "tipo": "fondo_inversion",
+    "tipo_label": "Fondo de inversión",
+    "tasa_interes_anual": 4.71,
+    "plazo_meses": 0,
+    "monto_minimo": 6400,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "Cuenta bancaria activa",
+      "Ingreso mínimo mensual demostrable",
+      "No estar reportado en centrales de riesgo"
+    ]
+  },
+  {
+    "id": "P013",
+    "nombre": "Boreal Black",
+    "tipo": "tarjeta_credito",
+    "tipo_label": "Tarjeta de crédito",
+    "tasa_interes_anual": 26.69,
+    "plazo_meses": 0,
+    "monto_minimo": 3700,
+    "cuota_anual": 90,
+    "moneda": "USD",
+    "requisitos": [
+      "Comprobante de domicilio",
+      "Ser mayor de edad"
+    ]
+  },
+  {
+    "id": "P014",
+    "nombre": "Andes Express",
+    "tipo": "prestamo_personal",
+    "tipo_label": "Préstamo personal",
+    "tasa_interes_anual": 22.04,
+    "plazo_meses": 48,
+    "monto_minimo": 8600,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "Comprobante de domicilio"
+    ]
+  },
+  {
+    "id": "P015",
+    "nombre": "Boreal Vivienda",
+    "tipo": "hipoteca",
+    "tipo_label": "Crédito hipotecario",
+    "tasa_interes_anual": 10.44,
+    "plazo_meses": 360,
+    "monto_minimo": 31100,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Comprobante de ingresos de los últimos 3 meses",
+      "Cuenta bancaria activa",
+      "Documento de identidad vigente",
+      "No estar reportado en centrales de riesgo"
+    ]
+  },
+  {
+    "id": "P016",
+    "nombre": "Solaris Digital",
+    "tipo": "cuenta_ahorro",
+    "tipo_label": "Cuenta de ahorro",
+    "tasa_interes_anual": 0.95,
+    "plazo_meses": 0,
+    "monto_minimo": 0,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Ingreso mínimo mensual demostrable",
+      "Ser mayor de edad"
+    ]
+  },
+  {
+    "id": "P017",
+    "nombre": "Ática Renta",
+    "tipo": "plazo_fijo",
+    "tipo_label": "Depósito a plazo fijo",
+    "tasa_interes_anual": 9.35,
+    "plazo_meses": 6,
+    "monto_minimo": 13400,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Comprobante de domicilio",
+      "No estar reportado en centrales de riesgo"
+    ]
+  },
+  {
+    "id": "P018",
+    "nombre": "Solaris Balance",
+    "tipo": "fondo_inversion",
+    "tipo_label": "Fondo de inversión",
+    "tasa_interes_anual": 10.31,
+    "plazo_meses": 0,
+    "monto_minimo": 9600,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "No estar reportado en centrales de riesgo",
+      "Ser mayor de edad"
+    ]
+  },
+  {
+    "id": "P019",
+    "nombre": "Vértice Black",
+    "tipo": "tarjeta_credito",
+    "tipo_label": "Tarjeta de crédito",
+    "tasa_interes_anual": 18.47,
+    "plazo_meses": 0,
+    "monto_minimo": 2400,
+    "cuota_anual": 30,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "No estar reportado en centrales de riesgo"
+    ]
+  },
+  {
+    "id": "P020",
+    "nombre": "Andes Flex",
+    "tipo": "prestamo_personal",
+    "tipo_label": "Préstamo personal",
+    "tasa_interes_anual": 23.71,
+    "plazo_meses": 12,
+    "monto_minimo": 10700,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "Comprobante de ingresos de los últimos 3 meses",
+      "Cuenta bancaria activa",
+      "Documento de identidad vigente"
+    ]
+  },
+  {
+    "id": "P021",
+    "nombre": "Zenit Techo",
+    "tipo": "hipoteca",
+    "tipo_label": "Crédito hipotecario",
+    "tasa_interes_anual": 8.72,
+    "plazo_meses": 360,
+    "monto_minimo": 73300,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "Cuenta bancaria activa"
+    ]
+  },
+  {
+    "id": "P022",
+    "nombre": "Cumbre Futuro",
+    "tipo": "cuenta_ahorro",
+    "tipo_label": "Cuenta de ahorro",
+    "tasa_interes_anual": 4.48,
+    "plazo_meses": 0,
+    "monto_minimo": 0,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Documento de identidad vigente",
+      "Ingreso mínimo mensual demostrable",
+      "Ser mayor de edad"
+    ]
+  },
+  {
+    "id": "P023",
+    "nombre": "Prisma Plazo",
+    "tipo": "plazo_fijo",
+    "tipo_label": "Depósito a plazo fijo",
+    "tasa_interes_anual": 5.86,
+    "plazo_meses": 24,
+    "monto_minimo": 14600,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Antigüedad laboral mínima de 6 meses",
+      "Ser mayor de edad"
+    ]
+  },
+  {
+    "id": "P024",
+    "nombre": "Andes Capital",
+    "tipo": "fondo_inversion",
+    "tipo_label": "Fondo de inversión",
+    "tasa_interes_anual": 5.75,
+    "plazo_meses": 0,
+    "monto_minimo": 22100,
+    "cuota_anual": 0,
+    "moneda": "USD",
+    "requisitos": [
+      "Documento de identidad vigente",
+      "Ingreso mínimo mensual demostrable",
+      "No estar reportado en centrales de riesgo"
+    ]
+  }
+]
