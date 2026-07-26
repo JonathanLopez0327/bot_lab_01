@@ -8,15 +8,37 @@ la lógica interna:
     - manejo de errores (JSON inválido, campo faltante, método no permitido)
     - que la respuesta HTTP coincide con la del agente (extremo a extremo)
 
+Los tests son HERMÉTICOS: fijan LLM_PROVIDER=fake (doble de prueba, sin red ni
+API keys) y reconstruyen el agente singleton, independientemente del proveedor
+que el operador tenga configurado en su .env.
+
 Ejecutar:
     .venv/bin/python manage.py test chat -v 2
 """
 import json
+import os
 
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from agent.graph import get_agent
+from agent.graph import get_agent, reset_agent
+
+_PREV_PROVIDER = None
+
+
+def setUpModule():
+    global _PREV_PROVIDER
+    _PREV_PROVIDER = os.environ.get("LLM_PROVIDER")
+    os.environ["LLM_PROVIDER"] = "fake"
+    reset_agent()
+
+
+def tearDownModule():
+    if _PREV_PROVIDER is None:
+        os.environ.pop("LLM_PROVIDER", None)
+    else:
+        os.environ["LLM_PROVIDER"] = _PREV_PROVIDER
+    reset_agent()
 
 
 class TestPaginaIndex(TestCase):

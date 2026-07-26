@@ -290,9 +290,8 @@
     function addMeta(data){
       const div = document.createElement('div');
       div.className = 'meta';
-      const det = data.determinista ? 'sí' : 'NO';
       div.textContent =
-        `proveedor=${data.proveedor} · determinista=${det} · intencion=${data.intencion} · ` +
+        `proveedor=${data.proveedor} · formato=${data.formato} · intencion=${data.intencion} · ` +
         `tipo=${data.tipo_detectado} · producto=${data.producto} · trace=[${data.trace.join(' → ')}] · ` +
         `thread_id=${data.thread_id} · turnos=${data.turnos}`;
       chat.appendChild(div);
@@ -300,8 +299,7 @@
     }
     function setStatus(data){
       if(!data || !data.proveedor){ return; }
-      const det = data.determinista ? 'determinista' : 'NO determinista';
-      status.textContent = `proveedor=${data.proveedor} · ${det}`;
+      status.textContent = `proveedor=${data.proveedor}`;
     }
 
     add(SALUDO, 'bot');

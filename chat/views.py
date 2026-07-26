@@ -2,8 +2,9 @@
 
 - index: renderiza la interfaz de chat (una sola página).
 - api_chat: recibe {"mensaje": "...", "thread_id": "..."} y devuelve la respuesta
-  determinista del agente LangGraph en JSON. Incluye el `trace` (nodos recorridos)
-  e `intencion` para que un QA pueda inspeccionar el comportamiento interno.
+  del agente LangGraph en JSON. Incluye el `trace` (nodos recorridos), `intencion`
+  y `formato` (variante de plantilla usada en el prompt) para que un QA pueda
+  inspeccionar el comportamiento interno.
 - api_cerrar: recibe {"thread_id": "..."} y cierra ese hilo a nivel del agente.
 
 El `thread_id` es solo un identificador de sesión (sin memoria): agrupa los turnos
@@ -55,7 +56,7 @@ def api_chat(request):
         "producto": (estado.get("producto") or {}).get("nombre") if estado.get("producto") else None,
         "trace": estado.get("trace", []),
         "proveedor": estado.get("proveedor"),
-        "determinista": estado.get("determinista"),
+        "formato": estado.get("formato"),
         "thread_id": thread_id,
         "turnos": turnos,
     })

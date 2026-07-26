@@ -1,8 +1,9 @@
 """Proveedor Claude (SDK oficial de Anthropic).
 
 Modelo por defecto: claude-opus-4-8. Nota: los modelos Opus 4.7/4.8 NO aceptan
-el parámetro `temperature` (devuelven 400), por lo que aquí se omite; el modo
-"determinista" real del laboratorio es LLM_PROVIDER=deterministic.
+el parámetro `temperature` (devuelven 400), por lo que aquí se omite; el
+determinismo del lab se apoya en el FORMATO exacto del system prompt
+(agent/prompting.py), no en la temperatura.
 """
 from __future__ import annotations
 

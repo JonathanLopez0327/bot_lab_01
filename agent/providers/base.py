@@ -1,20 +1,28 @@
-"""Interfaz común de proveedores + prompt de sistema compartido.
+"""Interfaz común de proveedores + reglas duras del system prompt.
 
-El prompt está diseñado para MINIMIZAR alucinaciones: el LLM solo debe usar los
-hechos del bloque CONTEXTO (que el grafo construye de forma determinista a partir
-del dataset). Así, aunque la redacción sea no determinista, los DATOS siguen
-anclados al dataset — un punto clave a verificar en QA.
+El LLM redacta SIEMPRE la respuesta final, pero acotado por estas reglas duras
+más el bloque FORMATO DE RESPUESTA (plantilla exacta según la intención) y el
+bloque CONTEXTO (únicos hechos permitidos) que construye agent/prompting.py.
+El objetivo es que el comportamiento sea (casi) determinista y verificable:
+la variabilidad del modelo queda reducida a rellenar huecos de una plantilla.
 """
 from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
 SYSTEM_PROMPT = (
-    "Eres un asistente de productos financieros. Responde SIEMPRE en español, "
-    "de forma breve y clara. Usa EXCLUSIVAMENTE los datos del bloque CONTEXTO "
-    "como única fuente de verdad. Si el dato no aparece en el CONTEXTO, di que no "
-    "lo tienes; NO inventes productos, tasas, requisitos ni cifras. No des asesoría "
-    "financiera personalizada."
+    "Eres un asistente de productos financieros. Obedece estas reglas SIN excepción:\n"
+    "1. Responde SIEMPRE en español.\n"
+    "2. Usa EXCLUSIVAMENTE los datos del bloque CONTEXTO como única fuente de verdad. "
+    "Si un dato no aparece ahí, di que no lo tienes.\n"
+    "3. Sigue el bloque FORMATO DE RESPUESTA al pie de la letra: misma estructura y "
+    "misma puntuación, sin saludos, preámbulos, despedidas ni texto extra.\n"
+    "4. NO inventes productos, tasas, requisitos ni cifras; no redondees ni "
+    "\"mejores\" los números del CONTEXTO.\n"
+    "5. Si hay un bloque EJEMPLO, solo ilustra el formato: JAMÁS uses sus datos "
+    "en la respuesta.\n"
+    "6. No des asesoría financiera personalizada ni recomendaciones.\n"
+    "7. Responde en un solo mensaje breve, sin Markdown salvo las comillas «»."
 )
 
 
